@@ -13,6 +13,16 @@ class MoviesController < ApplicationController
     # session[:ratings] = if params[:ratings].nil? then {} else params[:ratings] end
     #i guess it saves from the previous round???? idk tbh
     #calls on the Movie model to get the keys of the hash
+
+    #if both don't exist ==> not from where we were before
+    if !params.has_key?(:sort) && !params.has_key?(:ratings)
+      #if session has either saved ==> load that page
+      if session.has_key?(:sort) || session.has_key?(:ratings)
+        redirect_to movies_path(:sort => session[:sort], :ratings => session[:ratings])
+      end
+    end
+
+
     @all_ratings = Movie.all_ratings.keys
 
     #setting up ratings
@@ -30,6 +40,8 @@ class MoviesController < ApplicationController
 
     #update sessions
     session[:ratings] = ratings
+    session[:sort] = params[:sort]
+    #this method causes it to check all the boxes lmaoooo... 
     @ratings_to_show_hash = (if session.has_key?(:ratings) then session[:ratings] else {} end)
 
     #showing sorting should also be done here, via the movie_path
@@ -38,7 +50,7 @@ class MoviesController < ApplicationController
     #You may find it helpful to know that if you pass this helper method a hash of additional parameters, 
     #those parameters will be parsed by Rails and available in the params[] hash.
     if params.has_key?(:sort)
-      @movies = Movie.order(params[:sort]).with_ratings(session[:ratings])
+      @movies = Movie.order(params[:sort]).with_ratings(ratings)
     else
       #this shows all the movies available
       @movies = Movie.with_ratings(ratings)
