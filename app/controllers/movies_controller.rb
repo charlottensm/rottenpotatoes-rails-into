@@ -7,7 +7,18 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @movies = Movie.all
+    #needs the checkboxes to persist across sessions
+    #lol the issue w this, is that it records the previous selection????
+    # ok by setting it here, the session[:ratings] gets updated
+    # session[:ratings] = if params[:ratings].nil? then {} else params[:ratings] end
+
+    #i guess it saves from the previous round???? idk tbh
+    @ratings_to_show_hash = (if params.has_key?(:ratings) then params[:ratings] else {} end)
+    #calls on the Movie model to get the keys of the hash
+    @all_ratings = Movie.all_ratings.keys
+    #this shows all the movies available
+    @movies = Movie.with_ratings(if params[:ratings].nil? then Movie.all_ratings else params[:ratings] end)
+
   end
 
   def new
