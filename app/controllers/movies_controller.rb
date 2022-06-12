@@ -11,13 +11,41 @@ class MoviesController < ApplicationController
     #lol the issue w this, is that it records the previous selection????
     # ok by setting it here, the session[:ratings] gets updated
     # session[:ratings] = if params[:ratings].nil? then {} else params[:ratings] end
-
     #i guess it saves from the previous round???? idk tbh
-    @ratings_to_show_hash = (if params.has_key?(:ratings) then params[:ratings] else {} end)
     #calls on the Movie model to get the keys of the hash
     @all_ratings = Movie.all_ratings.keys
-    #this shows all the movies available
-    @movies = Movie.with_ratings(if params[:ratings].nil? then Movie.all_ratings else params[:ratings] end)
+
+    #setting up ratings
+    #if sort exists, use the session[:ratings]
+    # else if no ratings ==> all, else take from params
+    if !params[:sort].nil?
+      ratings = session[:ratings]
+    else 
+      if params[:ratings].nil?
+        ratings = Movie.all_ratings
+      else 
+        ratings = params[:ratings] 
+      end 
+    end
+
+    #update sessions
+    session[:ratings] = ratings
+    @ratings_to_show_hash = (if session.has_key?(:ratings) then session[:ratings] else {} end)
+
+    #showing sorting should also be done here, via the movie_path
+    #how to pass parameters into movie_path
+    #also... where is movie_path lmao
+    #You may find it helpful to know that if you pass this helper method a hash of additional parameters, 
+    #those parameters will be parsed by Rails and available in the params[] hash.
+    if params.has_key?(:sort)
+      @movies = Movie.order(params[:sort]).with_ratings(session[:ratings])
+    else
+      #this shows all the movies available
+      @movies = Movie.with_ratings(ratings)
+    end
+
+    #ok time to redo this, and pick out the parameters
+    
 
   end
 
