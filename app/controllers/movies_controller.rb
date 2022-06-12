@@ -22,7 +22,6 @@ class MoviesController < ApplicationController
       end
     end
 
-
     @all_ratings = Movie.all_ratings.keys
 
     #setting up ratings
@@ -41,6 +40,7 @@ class MoviesController < ApplicationController
     #update sessions
     session[:ratings] = ratings
     session[:sort] = params[:sort]
+    
     #this method causes it to check all the boxes lmaoooo... 
     @ratings_to_show_hash = (if session.has_key?(:ratings) then session[:ratings] else {} end)
 
