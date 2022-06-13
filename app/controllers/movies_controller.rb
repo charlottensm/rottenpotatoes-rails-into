@@ -26,18 +26,21 @@ class MoviesController < ApplicationController
 
 
     #setting up ratings
-    #if sort exists, use the session[:ratings]
-    # else if no ratings ==> all, else take from params
-    if !params[:sort].nil?
-      ratings = session[:ratings]
+    #if rating exists, ratings = params[:ratings]
+    # else if sort does not exist, and rating does not exist, take all
+    #if sort exist, but rating doesn't ==> take the session rating
+    if !params[:ratings].nil?
+      ratings = params[:ratings]
     else 
-      if !params.has_key?(:ratings)
-        ratings = {}
+      if !params.has_key?(:sort)
+        ratings = Movie.all_ratings
       else 
-        ratings = params[:ratings] 
+        #u only want to save this, if sort exists, but rating doesn't
+        ratings = session[:ratings]
       end 
-      session[:ratings] = ratings
     end
+
+    session[:ratings] = ratings
 
     #this method causes it to check all the boxes lmaoooo... 
     #hm so the ratings are being recorded in the session, but its not getting displayed 
@@ -46,6 +49,7 @@ class MoviesController < ApplicationController
     @ratings_to_show_hash = ratings
     
     #update sessions
+
     session[:sort] = if params.has_key?(:sort) then params[:sort] else {} end
 
     #showing sorting should also be done here, via the movie_path
