@@ -21,8 +21,9 @@ class MoviesController < ApplicationController
         redirect_to movies_path(:sort => session[:sort], :ratings => session[:ratings])
       end
     end
-
+   
     @all_ratings = Movie.all_ratings.keys
+
 
     #setting up ratings
     #if sort exists, use the session[:ratings]
@@ -30,26 +31,29 @@ class MoviesController < ApplicationController
     if !params[:sort].nil?
       ratings = session[:ratings]
     else 
-      if params[:ratings].nil?
-        ratings = Movie.all_ratings
+      if !params.has_key?(:ratings)
+        ratings = {}
       else 
         ratings = params[:ratings] 
       end 
+      session[:ratings] = ratings
     end
 
-    #update sessions
-    session[:ratings] = ratings
-    session[:sort] = params[:sort]
-    
     #this method causes it to check all the boxes lmaoooo... 
-    @ratings_to_show_hash = (if session.has_key?(:ratings) then session[:ratings] else {} end)
+    #hm so the ratings are being recorded in the session, but its not getting displayed 
+    #TODO : solve both bugs lmao ....
+
+    @ratings_to_show_hash = ratings
+    
+    #update sessions
+    session[:sort] = if params.has_key?(:sort) then params[:sort] else {} end
 
     #showing sorting should also be done here, via the movie_path
     #how to pass parameters into movie_path
     #also... where is movie_path lmao
     #You may find it helpful to know that if you pass this helper method a hash of additional parameters, 
     #those parameters will be parsed by Rails and available in the params[] hash.
-    if params.has_key?(:sort)
+    if !params[:sort].nil?
       @movies = Movie.order(params[:sort]).with_ratings(ratings)
     else
       #this shows all the movies available

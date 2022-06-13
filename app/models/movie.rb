@@ -10,7 +10,11 @@ class Movie < ActiveRecord::Base
   end 
 
   def self.with_ratings(ratings)
-    Movie.where(rating: ratings.keys)
+    if ratings.empty?
+      Movie.where(rating: Movie.all_ratings.keys)
+    else 
+     Movie.where(rating: ratings.keys)
+    end
   end
   
 end
