@@ -17,6 +17,7 @@ gem 'jquery-rails'
 # gem 'unicorn'
 
 gem 'themoviedb'
+gem 'rails_same_site_cookie'
 
 # Window support
 gem 'tzinfo'

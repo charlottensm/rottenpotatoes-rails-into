@@ -20,6 +20,8 @@ module Rottenpotatoes
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
     # config.i18n.default_locale = :de
 
+    # allow for same site cookies 
+    config.action_dispatch.cookies_same_site_protection = :none
     # Do not swallow errors in after_commit/after_rollback callbacks.
     config.active_record.raise_in_transactional_callbacks = true
   end
